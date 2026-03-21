@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+// branch split homescreen 작업 후 subview branch 생성 예정
 struct HomeView: View {
     var body: some View {
         VStack(spacing: 20) {
