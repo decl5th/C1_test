@@ -12,6 +12,7 @@ struct ContentView: View {
         NavigationStack { // checking push
             // test
             // test2
+            // test3
             ContentView()
         }
     }
