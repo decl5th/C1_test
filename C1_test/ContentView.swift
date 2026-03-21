@@ -11,6 +11,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack { // checking push
             // test
+            // test2
             ContentView()
         }
     }
