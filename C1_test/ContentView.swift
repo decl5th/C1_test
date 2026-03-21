@@ -9,11 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        NavigationStack { // checking push
-            // test
-            // test2
-            // test3
-            ContentView()
+        NavigationStack {
+            HomeView()
         }
     }
 }
