@@ -45,14 +45,13 @@ struct SchedulingView: View {
                 }
             HStack{
                 Spacer()
-                Button(action: {
-                    HomeView() //go to another view
-                }) {
-                    Text("신청")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                }
-                .buttonStyle(.glassProminent)
+                NavigationLink(destination: HomeView()) {
+                                  Text("신청")
+                                      .foregroundStyle(Color.white)
+                                      .font(.headline)
+                                      .padding()
+                                      .background(Color.blue.clipShape(.rect(cornerRadius: 25)))
+                              }
                 .frame(alignment: .bottomTrailing)
             }
             
