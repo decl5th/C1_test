@@ -9,7 +9,11 @@ import SwiftUI
 
 struct SchedulingView: View {
     
+    
+    @State private var topExpanded: Bool = true
     @State private var date = Date()
+    @State private var fullText: String = "This is some editable text..."
+    @State var text: String = "신청"
     
     var body: some View {
         VStack(spacing: 16) {
@@ -22,7 +26,30 @@ struct SchedulingView: View {
                 displayedComponents: [.date]
             )
             .datePickerStyle(.graphical)
+            
+            DisclosureGroup("Items", isExpanded: $topExpanded) {
+                DisclosureGroup("Sub-items") {
+                    Text("Sub-item 1")
+                }
+            }
+            
+            TextEditor(text: $fullText)
+                        .foregroundColor(Color.black)
+                        .font(.custom("HelveticaNeue", size: 13))
+                        .lineSpacing(5)
+                        .textEditorStyle(.automatic)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(Color.gray, lineWidth: 0.4)
+                        }
+            
+            Button("신청") {
+                
+            }
+            .buttonStyle(.bordered)
 
+
+            
             Text("This is the second screen.")
         }
         .padding()
