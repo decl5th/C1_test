@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SchedulingView: View {
     
+    @Environment(\.dismiss) var dismiss
     
     @State private var topExpanded: Bool = true
     @State private var date = Date()
@@ -45,13 +46,14 @@ struct SchedulingView: View {
                 }
             HStack{
                 Spacer()
-                NavigationLink(destination: HomeView()) {
-                                  Text("신청")
-                                      .foregroundStyle(Color.white)
-                                      .font(.headline)
-                                      .padding()
-                                      .background(Color.blue.clipShape(.rect(cornerRadius: 25)))
-                              }
+                Button {
+                    dismiss()
+                } label: {
+                    Text("신청")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                }
+                .buttonStyle(.glassProminent)
                 .frame(alignment: .bottomTrailing)
             }
             
