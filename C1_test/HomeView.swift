@@ -13,12 +13,12 @@ struct HomeView: View {
             Text("Home Screen")
                 .font(.largeTitle)
 
-            NavigationLink("Go to Detail") {
-                SubView()
+            NavigationLink("멘토링 신청하기") {
+                SchedulingView()
             }
         }
         .padding()
-        .navigationTitle("Home")
+        .navigationTitle("나의 멘토링")
     }
 }
 
