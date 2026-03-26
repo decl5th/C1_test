@@ -7,32 +7,53 @@
 
 import SwiftUI
 
+struct Mentors: Identifiable {
+  let mentorName: String
+  let mentorAvailable: Bool
+  let id = UUID()
+  
+}
+
+
 struct SchedulingView: View {
     
     @Environment(\.dismiss) var dismiss
     
     @State private var topExpanded: Bool = true
-    @State private var date = Date()
+    @State private var mentoringDate = Date()
     @State private var fullText: String = "This is some editable text..."
-    @State var text: String = "신청"
+    @State private var availableMentor = [
+        Mentors(mentorName: "아이작", mentorAvailable: true),
+        Mentors(mentorName: "지쿠", mentorAvailable: true),
+        Mentors(mentorName: "MK", mentorAvailable: false)
+     ]
+    
+    var dateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        return formatter
+    }
     
     
     var body: some View {
         VStack(spacing: 16) {
             Text("새로운 멘토링")
                 .font(.title)
+
             
             DatePicker(
                 "Start Date",
-                selection: $date,
-                displayedComponents: [.date]
+                selection: $mentoringDate,
+                in: Date()...
             )
-            .datePickerStyle(.graphical)
+            .datePickerStyle(GraphicalDatePickerStyle())
+            .frame(maxWidth: 400)
+        
             
-            DisclosureGroup("Items", isExpanded: $topExpanded) {
-                DisclosureGroup("Sub-items") {
-                    Text("Sub-item 1")
-                }
+            Text("Mentoring is \(mentoringDate, formatter: dateFormatter)")
+            
+            DisclosureGroup("Mentors", isExpanded: $topExpanded) {
+                
             }
             
             TextEditor(text: $fullText)
