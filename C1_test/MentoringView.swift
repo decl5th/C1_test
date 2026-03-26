@@ -7,12 +7,26 @@
 
 import SwiftUI
 
-struct Mentors: Identifiable {
-  let mentorName: String
-  let mentorAvailable: Bool
-  let id = UUID()
+struct Mentors : Identifiable {
+    var id: Int
+    var mentorName: String
+    var mentorAvailable: Bool
   
+    subscript(key: String) -> Int{
+        switch key {
+        case "id" :
+            return id
+        default :
+            return 0
+        }
+    }
 }
+
+let mentor: [Mentors] = [
+    Mentors(id:1, mentorName: "아이작", mentorAvailable: true),
+    Mentors(id:2, mentorName: "지쿠", mentorAvailable: true),
+    Mentors(id:3, mentorName: "MK", mentorAvailable: false)
+]
 
 
 struct SchedulingView: View {
@@ -22,11 +36,14 @@ struct SchedulingView: View {
     @State private var topExpanded: Bool = true
     @State private var mentoringDate = Date()
     @State private var fullText: String = "This is some editable text..."
-    @State private var availableMentor = [
+    
+    /*
+     @State private var availableMentor = [
         Mentors(mentorName: "아이작", mentorAvailable: true),
         Mentors(mentorName: "지쿠", mentorAvailable: true),
         Mentors(mentorName: "MK", mentorAvailable: false)
      ]
+     */
     
     var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
@@ -53,7 +70,12 @@ struct SchedulingView: View {
             Text("Mentoring is \(mentoringDate, formatter: dateFormatter)")
             
             DisclosureGroup("Mentors", isExpanded: $topExpanded) {
-                
+                List(mentor) { mentor in
+                    HStack{
+                        Text(mentor.mentorName)
+                    }
+                    
+                }
             }
             
             TextEditor(text: $fullText)
@@ -68,6 +90,7 @@ struct SchedulingView: View {
             HStack{
                 Spacer()
                 Button {
+                    
                     dismiss()
                 } label: {
                     Text("신청")
