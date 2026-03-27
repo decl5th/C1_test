@@ -28,12 +28,25 @@ let mentor: [Mentors] = [
     Mentors(id:3, mentorName: "MK", mentorAvailable: false)
 ]
 
+struct MentorList: View {
+    var body: some View {
+        List {
+            VStack {
+                ForEach(mentor, id: \.id) { mentor in
+                    HStack{
+                        Text(mentor.mentorName)
+                    }
+                }
+            }
+        }
+    }
+}
 
 struct SchedulingView: View {
     
     @Environment(\.dismiss) var dismiss
     
-    @State private var topExpanded: Bool = true
+    @State private var isMentorListPresented: Bool = false
     @State private var mentoringDate = Date()
     @State private var fullText: String = "This is some editable text..."
     
@@ -69,14 +82,12 @@ struct SchedulingView: View {
             
             Text("Mentoring is \(mentoringDate, formatter: dateFormatter)")
             
-            DisclosureGroup("Mentors", isExpanded: $topExpanded) {
-                List(mentor) { mentor in
-                    HStack{
-                        Text(mentor.mentorName)
-                    }
-                    
-                }
+            Button {
+                isMentorListPresented = true
+            } label: {
+                Text("Mentors")
             }
+            
             
             TextEditor(text: $fullText)
                 .foregroundColor(Color.black)
@@ -103,8 +114,15 @@ struct SchedulingView: View {
             
         }
         .padding()
+        .sheet(isPresented: $isMentorListPresented) {
+            MentorList()
+        }
     }
 }
 #Preview {
     SchedulingView()
+}
+
+#Preview {
+    MentorList()
 }
