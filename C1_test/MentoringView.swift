@@ -8,34 +8,59 @@
 import SwiftUI
 
 struct Mentors : Identifiable {
-    var id: Int
+    let id = UUID()
     var mentorName: String
-    var mentorAvailable: Bool
-  
-    subscript(key: String) -> Int{
-        switch key {
-        case "id" :
-            return id
-        default :
-            return 0
+    var mentorAvailable: String
+
+}
+
+struct MentorListRow: View {
+    var mentorList: Mentors
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(mentorList.mentorName)
+                .foregroundColor(.primary)
+                .font(.headline)
+            Text(mentorList.mentorAvailable)
+            .foregroundColor(.secondary)
+            .font(.subheadline)
         }
     }
 }
 
-let mentor: [Mentors] = [
-    Mentors(id:1, mentorName: "아이작", mentorAvailable: true),
-    Mentors(id:2, mentorName: "지쿠", mentorAvailable: true),
-    Mentors(id:3, mentorName: "MK", mentorAvailable: false)
-]
+
+struct Expert: Identifiable {
+    let id = UUID()
+    var expertArea: String
+    var mentor: [Mentors]
+}
+
+struct Academy {
+    var experts: [Expert]
+}
+
+var academy = Academy(experts: [
+    Expert(expertArea: "Tech", mentor: [
+        Mentors(mentorName: "Issac", mentorAvailable: "가능"),
+        Mentors(mentorName: "MK", mentorAvailable: "불가능"),
+    ]),
+    Expert(expertArea: "Design", mentor: [
+        Mentors(mentorName: "Jiku", mentorAvailable: "가능")
+    ])
+])
 
 struct MentorList: View {
+    
     var body: some View {
         List {
-            VStack {
-                ForEach(mentor, id: \.id) { mentor in
-                    HStack{
-                        Text(mentor.mentorName)
+            ForEach(academy.experts) { expert in
+                Section{
+                    ForEach(expert.mentor) { mentorList in
+                        MentorListRow(mentorList: mentorList)
                     }
+                } header: {
+                    Text(expert.expertArea)
                 }
             }
         }
@@ -49,14 +74,7 @@ struct SchedulingView: View {
     @State private var isMentorListPresented: Bool = false
     @State private var mentoringDate = Date()
     @State private var fullText: String = "This is some editable text..."
-    
-    /*
-     @State private var availableMentor = [
-        Mentors(mentorName: "아이작", mentorAvailable: true),
-        Mentors(mentorName: "지쿠", mentorAvailable: true),
-        Mentors(mentorName: "MK", mentorAvailable: false)
-     ]
-     */
+
     
     var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
