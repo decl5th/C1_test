@@ -11,20 +11,20 @@ struct Mentors : Identifiable {
     let id = UUID()
     var mentorName: String
     var mentorAvailable: String
-
+    
 }
 
 struct MentorListRow: View {
     var mentorList: Mentors
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(mentorList.mentorName)
                 .foregroundColor(.primary)
                 .font(.headline)
             Text(mentorList.mentorAvailable)
-            .foregroundColor(.secondary)
-            .font(.subheadline)
+                .foregroundColor(.secondary)
+                .font(.subheadline)
         }
     }
 }
@@ -74,7 +74,7 @@ struct SchedulingView: View {
     @State private var isMentorListPresented: Bool = false
     @State private var mentoringDate = Date()
     @State private var fullText: String = "This is some editable text..."
-
+    
     
     var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
@@ -87,7 +87,7 @@ struct SchedulingView: View {
         VStack(spacing: 16) {
             Text("새로운 멘토링")
                 .font(.title)
-
+            
             
             DatePicker(
                 "Start Date",
@@ -96,7 +96,6 @@ struct SchedulingView: View {
             )
             .datePickerStyle(GraphicalDatePickerStyle())
             .frame(maxWidth: 400)
-        
             
             Text("Mentoring is \(mentoringDate, formatter: dateFormatter)")
             
@@ -137,6 +136,8 @@ struct SchedulingView: View {
         }
     }
 }
+
+
 #Preview {
     SchedulingView()
 }
