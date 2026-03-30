@@ -7,70 +7,11 @@
 
 import SwiftUI
 
-struct Mentors : Identifiable {
-    let id = UUID()
-    var mentorName: String
-    var mentorAvailable: String
-    
-}
-
-struct MentorListRow: View {
-    var mentorList: Mentors
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(mentorList.mentorName)
-                .foregroundColor(.primary)
-                .font(.headline)
-            Text(mentorList.mentorAvailable)
-                .foregroundColor(.secondary)
-                .font(.subheadline)
-        }
-    }
-}
-
-
-struct Expert: Identifiable {
-    let id = UUID()
-    var expertArea: String
-    var mentor: [Mentors]
-}
-
-struct Academy {
-    var experts: [Expert]
-}
-
-var academy = Academy(experts: [
-    Expert(expertArea: "Tech", mentor: [
-        Mentors(mentorName: "Issac", mentorAvailable: "가능"),
-        Mentors(mentorName: "MK", mentorAvailable: "불가능"),
-    ]),
-    Expert(expertArea: "Design", mentor: [
-        Mentors(mentorName: "Jiku", mentorAvailable: "가능")
-    ])
-])
-
-struct MentorList: View {
-    
-    var body: some View {
-        List {
-            ForEach(academy.experts) { expert in
-                Section{
-                    ForEach(expert.mentor) { mentorList in
-                        MentorListRow(mentorList: mentorList)
-                    }
-                } header: {
-                    Text(expert.expertArea)
-                }
-            }
-        }
-    }
-}
-
 struct SchedulingView: View {
     
     @Environment(\.dismiss) var dismiss
     
+    @State private var selectedMentorName: Mentor? = nil
     @State private var isMentorListPresented: Bool = false
     @State private var mentoringDate = Date()
     @State private var fullText: String = "This is some editable text..."
@@ -97,12 +38,21 @@ struct SchedulingView: View {
             .datePickerStyle(GraphicalDatePickerStyle())
             .frame(maxWidth: 400)
             
-            Text("Mentoring is \(mentoringDate, formatter: dateFormatter)")
+            // Text("Mentoring is \(mentoringDate, formatter: dateFormatter)")
             
-            Button {
-                isMentorListPresented = true
-            } label: {
-                Text("Mentors")
+            HStack{
+                Button {
+                    isMentorListPresented = true
+                } label: {
+                    Text("Mentors")
+                }
+                
+                
+                if let selectedMentorName {
+                    Text(selectedMentorName.mentorName)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             }
             
             
@@ -118,7 +68,6 @@ struct SchedulingView: View {
             HStack{
                 Spacer()
                 Button {
-                    
                     dismiss()
                 } label: {
                     Text("신청")
@@ -132,7 +81,9 @@ struct SchedulingView: View {
         }
         .padding()
         .sheet(isPresented: $isMentorListPresented) {
-            MentorList()
+            MentorsList(academy: sampleAcademy,
+                        selectedMentorName: $selectedMentorName)
+                
         }
     }
 }
@@ -143,5 +94,6 @@ struct SchedulingView: View {
 }
 
 #Preview {
-    MentorList()
+    MentorsList(academy: sampleAcademy,selectedMentorName: .constant(nil)
+    )
 }
