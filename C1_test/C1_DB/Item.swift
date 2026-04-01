@@ -10,10 +10,10 @@ import SwiftData
 
 
 @Model
-final class Item {
-    var selectedTime: Date
-    var selectedMentor: String
-    var qToMentor: String
+final class schedulingRecords {
+    var selectedTime: Date // Datepicker에서 선택한 날짜와 시간
+    var selectedMentor: String // MentorList에서 선택한 mentorName
+    var qToMentor: String // TextEditor에서 입력한 String 
 
     init(selectedTime: Date, selectedMentor: String, qToMentor: String) {
         self.selectedTime = selectedTime
