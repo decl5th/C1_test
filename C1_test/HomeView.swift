@@ -18,6 +18,8 @@ struct Mentoring: Identifiable {
   var fullName: String { mentorName }
 }
 
+
+
 struct HomeView: View {
     
     @State private var mentors = [
@@ -26,6 +28,7 @@ struct HomeView: View {
      ]
     
     @State private var sortOrderBy = [KeyPathComparator(\Mentoring.mentorName)]
+    @State private var goToScheduling = false
      
 #if os(iOS)
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -35,34 +38,53 @@ struct HomeView: View {
 #endif
     
     var body: some View {
-        VStack(spacing: 20) {
+        ZStack{
             
-            Table(mentors, sortOrder: $sortOrderBy){
-                TableColumn("Mentor", value: \.mentorName) { mentors in
-                    VStack(alignment: .leading) {
-                        Text(isCompact ? mentors.fullName : mentors.mentorName)
-                        if isCompact{
-                            Text(mentors.mentoringDate)
+            Color.backgroundApp.ignoresSafeArea(edges: .all)
+            
+            VStack(spacing: 20) {
+                
+                if mentors.isEmpty{
+                    EmptyMentoringView{
+                        goToScheduling = true
+                    }
+                } else {
+                    Table(mentors, sortOrder: $sortOrderBy){
+                        TableColumn("Mentor", value: \.mentorName) { mentors in
+                            VStack(alignment: .leading) {
+                                Text(isCompact ? mentors.fullName : mentors.mentorName)
+                                if isCompact{
+                                    Text(mentors.mentoringDate)
+                                    
+                                    Text(mentors.mentoringTime)
+                                    
+                                }
                                 
-                            Text(mentors.mentoringTime)
-                                
+                            }
+                            
+                            
                         }
+                        
+                        TableColumn("Date", value: \.mentoringDate)
+                        TableColumn("Time", value: \.mentoringTime)
+                    }
+                    .scrollContentBackground(.hidden)
+                    
+                    .onChange(of: sortOrderBy){
+                        _, sortOrderBy in
+                        mentors.sort(using: sortOrderBy)
                     }
                 }
-                TableColumn("Date", value: \.mentoringDate)
-                TableColumn("Time", value: \.mentoringTime)
-            }
-            .onChange(of: sortOrderBy){
-                _, sortOrderBy in
-                mentors.sort(using: sortOrderBy)
-            }
 
-            NavigationLink("멘토링 신청하기") {
-                SchedulingView()
+                
+                NavigationLink("멘토링 신청하기") {
+                    SchedulingView()
+                }
             }
+            .padding()
+            .navigationTitle("나의 멘토링")
+            
         }
-        .padding()
-        .navigationTitle("나의 멘토링")
     }
 }
 
