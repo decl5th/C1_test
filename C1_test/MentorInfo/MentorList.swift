@@ -31,7 +31,7 @@ struct MentorsList: View {
                                 
                                 if selectedMentorName?.id == mentor.id {
                                     Image(systemName: "checkmark")
-                                        .foregroundStyle(.blue)
+                                        .foregroundStyle(.tint)
                                 }
                             }
                             .contentShape(Rectangle())

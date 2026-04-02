@@ -27,23 +27,54 @@ struct SchedulingView: View {
         return formatter
     }
     
-    let blueGradient = Color(.backgroundApp)
+    let  backgroundCover = Color(.backgroundApp)
     
     private func schedulingSave() {
-        UserDefaults.standard.set(mentoringDate, forKey: "mentoringDate")
-        UserDefaults.standard.set(selectedMentorName?.mentorName, forKey: "selectedMentorName")
-        UserDefaults.standard.set(fullText, forKey: "fullText")
+        // 임시 배열 생성 => dateArray에 Date타입 배열 형태로 담을거야
+        var dateArray: [Date] = []
+        // 저장 불러오기 -> 임시배열에 저장 => dateArray라는 변수는 또 userdefaults에 있는 배열로 Date타입으로 담는용으로 취급할거야
+        dateArray = UserDefaults.standard.array(forKey: "mentoringDate") as? [Date] ?? []
+        // 임시 배열에 -> 내 요소 추가 => 그래서 이 배열에 내가 선택한 날짜를 담을거야
+        dateArray.append(mentoringDate)
+        // 임시 배열을 유저디폴트에 저장 => 유저티폴트 저장값으로 dateArray를 담을거야
+        UserDefaults.standard.set(dateArray, forKey: "mentoringDate")
+        
+        /*
+        var mentorNameArray = [Mentor?]
+        mentorNameArray = UserDefaults.standard.array(forKey: "selectedMentorName") as? [Mentor?] ?? []
+        mentorNameArray.append(selectedMentorName)
+        UserDefaults.standard.set(mentorNameArray, forKey: "selectedMentorName")
+        */
+        
+        var mentorNameArray: [String] = []
+          mentorNameArray = UserDefaults.standard.stringArray(forKey: "selectedMentorName") ?? []
+          mentorNameArray.append(selectedMentorName?.mentorName ?? "멘토 미선택")
+          UserDefaults.standard.set(mentorNameArray, forKey: "selectedMentorName")
+        
+        
+        var questionArrary : [String] = []
+        questionArrary = UserDefaults.standard.array(forKey: "fullText") as? [String] ?? []
+        questionArrary.append(fullText)
+        UserDefaults.standard.set(questionArrary, forKey: "fullText")
+        
+        
+        // 단수형 저장식 UserDefaults.standard.set(mentoringDate, forKey: "mentoringDate")
+        //UserDefaults.standard.set(selectedMentorName?.mentorName, forKey: "selectedMentorName")
+        // UserDefaults.standard.set(fullText, forKey: "fullText")
     }
     
     var body: some View {
         ZStack {
             
-            blueGradient
+            backgroundCover
                 .ignoresSafeArea(edges: .all)
             
             VStack(spacing: 16) {
                 Text("새로운 멘토링")
                     .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.black)
+
                 
                 
                 DatePicker(
@@ -55,24 +86,42 @@ struct SchedulingView: View {
                 .frame(maxWidth: 400)
                 
                 // Text("Mentoring is \(mentoringDate, formatter: dateFormatter)")
-                
-                HStack{
+                    
                     Button {
                         isMentorListPresented = true
                     } label: {
-                        Text("Mentors")
-                        
+                        ZStack {
+                            HStack {
+                                Text("Mentors")
+                                    .font(.headline)
+                                    .foregroundStyle(.black)
+                                
+                                Spacer()
+                            }
+                            .padding(.horizontal, 14)
+                            
+                            if let selectedMentorName {
+                                Text(selectedMentorName.mentorName)
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.accent)
+                                    .multilineTextAlignment(.center)
+                            } else {
+                                Text("멘토를 선택해주세요")
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.center)
+                            }
+                        }
+                        .frame(height: 56)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 15)
+                                .stroke(Color.accent, lineWidth: 0.4)
+                        }
                     }
-                    .foregroundStyle(.black)
-                    
-                    
-                    
-                    if let selectedMentorName {
-                        Text(selectedMentorName.mentorName)
-                            .font(.headline)
-                            .foregroundStyle(.accent)
-                    }
-                }
+                    .buttonStyle(.plain)
+                
                 
                 
                 TextEditor(text: $fullText)
@@ -87,6 +136,7 @@ struct SchedulingView: View {
                     }
                 
                 HStack{
+                    
                     Spacer()
                     Button {
                         schedulingSave()
