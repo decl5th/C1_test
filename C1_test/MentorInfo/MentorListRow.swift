@@ -14,10 +14,12 @@ struct MentorsListRow: View {
             Text(mentor.mentorName)
                 .foregroundColor(.primary)
                 .font(.headline)
-            
-            Text(mentor.mentorAvailable)
-                .foregroundColor(.secondary)
-                .font(.subheadline)
+
+            if !mentor.mentorAvailable.isEmpty {
+                Text(mentor.mentorAvailable)
+                    .foregroundColor(.secondary)
+                    .font(.subheadline)
+            }
         }
     }
 }

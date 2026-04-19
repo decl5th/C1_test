@@ -164,10 +164,9 @@ struct SchedulingView: View {
             }
             .padding()
             .sheet(isPresented: $isMentorListPresented) {
-                    
-                    MentorsList(academy: sampleAcademy,
-                                selectedMentorName: $selectedMentorName)
-                
+                NavigationStack {
+                    MentorsList(selectedMentorName: $selectedMentorName)
+                }
             }
             // .background(.tint)
             
@@ -188,11 +187,14 @@ private func schedulingSave() {
 
 
 
-#Preview {
+#Preview("Scheduling") {
     SchedulingView()
+        .modelContainer(InitialMentorData.previewContainer)
 }
 
-#Preview {
-    MentorsList(academy: sampleAcademy,selectedMentorName: .constant(nil)
-    )
-}
+//#Preview("Mentor List") {
+//    NavigationStack {
+//        MentorsList(selectedMentorName: .constant(nil))
+//    }
+//    .modelContainer(InitialMentorData.previewContainer)
+//}

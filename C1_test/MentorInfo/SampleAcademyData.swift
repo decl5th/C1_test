@@ -1,16 +1,92 @@
 import Foundation
+import SwiftData
 
-let sampleAcademy = Ada(experts: [
-    Expertise(expertArea: "Tech", mentors: [
-        Mentor(mentorName: "Issac", mentorAvailable: "가능"),
-        Mentor(mentorName: "Haward", mentorAvailable: "불가능"),
-        Mentor(mentorName: "Jaesung", mentorAvailable: "가능")
+enum InitialMentorData {
+    static let academyName = "Ada"
 
-    ]),
-    Expertise(expertArea: "Design", mentors: [
-        Mentor(mentorName: "Jiku", mentorAvailable: "가능"),
-        Mentor(mentorName: "Saya", mentorAvailable: "가능"),
-        Mentor(mentorName: "Friday", mentorAvailable: "불가능")
+    static let expertises: [(area: String, mentors: [String])] = [
+        (
+            area: "Tech",
+            mentors: [
+                "Issac",
+                "Jaesung",
+                "Jason",
+                "Howard",
+                "Rumi",
+                "Nathan",
+                "Lingo",
+                "Judy",
+                "Leeo",
+                "Jett"
+            ]
+        ),
+        (
+            area: "Design",
+            mentors: [
+                "Jiku",
+                "Friday",
+                "Saya",
+                "Senny"
+            ]
+        )
+    ]
 
-    ])
-])
+    static func makeAcademy() -> Academy {
+        Academy(
+            name: academyName,
+            experts: expertises.enumerated().map { expertiseIndex, expertise in
+                Expertise(
+                    expertArea: expertise.area,
+                    sortOrder: expertiseIndex,
+                    mentors: expertise.mentors.enumerated().map { mentorIndex, mentorName in
+                        Mentor(
+                            mentorName: mentorName,
+                            sortOrder: mentorIndex
+                        )
+                    }
+                )
+            }
+        )
+    }
+
+    @MainActor
+    static func seedIfNeeded(in modelContext: ModelContext) {
+        let descriptor = FetchDescriptor<Academy>(
+            predicate: #Predicate { academy in
+                academy.name == academyName
+            }
+        )
+
+        guard let count = try? modelContext.fetchCount(descriptor), count == 0 else {
+            return
+        }
+
+        modelContext.insert(makeAcademy())
+        try? modelContext.save()
+    }
+
+    @MainActor
+    static let previewContainer: ModelContainer = {
+        do {
+            let schema = Schema([
+                Academy.self,
+                Expertise.self,
+                Mentor.self,
+                schedulingRecords.self
+            ])
+            let configuration = ModelConfiguration(
+                schema: schema,
+                isStoredInMemoryOnly: true
+            )
+            let container = try ModelContainer(
+                for: schema,
+                configurations: [configuration]
+            )
+
+            seedIfNeeded(in: container.mainContext)
+            return container
+        } catch {
+            fatalError("Failed to create preview model container: \(error)")
+        }
+    }()
+}
