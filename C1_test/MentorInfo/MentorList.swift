@@ -15,16 +15,31 @@ struct MentorsList: View {
     @State private var expandedExpertiseIDs: Set<UUID> = []
 
     private let collapsedMentorLimit = 3
+    private let sheetBackgroundColor = Color.backgroundApp
+    private let rowBackgroundColor = Color.white.opacity(0.94)
+    private let secondaryTextColor = Color.black.opacity(0.68)
     
     var body: some View {
-        List { listContent }
+        ZStack {
+            sheetBackgroundColor
+                .ignoresSafeArea()
+
+            List { listContent }
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
+                .listStyle(.insetGrouped)
+        }
         .navigationTitle("멘토 선택")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(sheetBackgroundColor, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .preferredColorScheme(.light)
     }
 
     @ViewBuilder
     private var listContent: some View {
         ForEach(expertises) { expert in
-            Section(expert.expertArea) {
+            Section {
                 ForEach(visibleMentors(for: expert)) { mentor in
                     mentorButton(for: mentor)
                 }
@@ -32,6 +47,11 @@ struct MentorsList: View {
                 if shouldShowExpansionButton(for: expert) {
                     expandButton(for: expert)
                 }
+            } header: {
+                Text(expert.expertArea)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(secondaryTextColor)
             }
         }
     }
@@ -57,6 +77,7 @@ struct MentorsList: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .listRowBackground(rowBackgroundColor)
     }
 
     private func expandButton(for expertise: Expertise) -> some View {
@@ -74,6 +95,7 @@ struct MentorsList: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .listRowBackground(rowBackgroundColor)
     }
 
     private func sortedMentors(for expertise: Expertise) -> [Mentor] {

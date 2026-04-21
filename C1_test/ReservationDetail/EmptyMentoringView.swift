@@ -3,6 +3,8 @@ import SwiftUI
 struct EmptyMentoringView: View {
     
     let action: () -> Void
+    private let primaryTextColor = Color.black.opacity(0.9)
+    private let secondaryTextColor = Color.black.opacity(0.68)
     
     var body: some View {
         Button {
@@ -23,11 +25,11 @@ struct EmptyMentoringView: View {
                 VStack(spacing: 6) {
                     Text("예약된 멘토링이 없습니다")
                         .font(.headline)
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(primaryTextColor)
                     
                     Text("새로운 멘토링을 신청하려면 눌러주세요")
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(secondaryTextColor)
                         .multilineTextAlignment(.center)
                 }
             }
@@ -41,7 +43,7 @@ struct EmptyMentoringView: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .stroke(
-                        Color.secondary.opacity(0.5),
+                        secondaryTextColor.opacity(0.35),
                         style: StrokeStyle(lineWidth: 1.5, dash: [7])
                     )
             )

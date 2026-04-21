@@ -64,6 +64,7 @@ struct HalfHourTimePicker: UIViewRepresentable {
         picker.minuteInterval = 30
         picker.minimumDate = minimumDate
         picker.locale = Locale(identifier: "ko_KR")
+        picker.overrideUserInterfaceStyle = .light
         picker.addTarget(
             context.coordinator,
             action: #selector(Coordinator.valueChanged(_:)),

@@ -10,6 +10,8 @@ struct MentoringDetailView: View {
     @State private var editedQuestion: String
     @State private var isEditingQuestion: Bool
     @State private var showDeleteConfirmation = false
+    private let primaryTextColor = Color.black.opacity(0.9)
+    private let secondaryTextColor = Color.black.opacity(0.68)
 
     init(record: schedulingRecords) {
         self.record = record
@@ -23,12 +25,13 @@ struct MentoringDetailView: View {
                 Text("예약 상세")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(primaryTextColor)
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text("예약 정보")
                         .font(.headline)
                         .fontWeight(.semibold)
+                        .foregroundStyle(primaryTextColor)
 
                     VStack(spacing: 14) {
                         infoRow(title: "멘토", value: record.selectedMentor)
@@ -66,6 +69,7 @@ struct MentoringDetailView: View {
                         Text("사전 질의")
                             .font(.headline)
                             .fontWeight(.semibold)
+                            .foregroundStyle(primaryTextColor)
 
                         Spacer()
 
@@ -85,13 +89,14 @@ struct MentoringDetailView: View {
                         if isEditingQuestion {
                             TextEditor(text: $editedQuestion)
                                 .scrollContentBackground(.hidden)
+                                .foregroundColor(primaryTextColor)
                                 .frame(minHeight: 200)
                                 .padding(16)
                         } else {
                             ScrollView {
                                 Text(record.qToMentor)
                                     .frame(maxWidth: .infinity, minHeight: 200, alignment: .topLeading)
-                                    .foregroundStyle(.primary)
+                                    .foregroundStyle(primaryTextColor)
                             }
                             .padding(16)
                         }
@@ -133,7 +138,7 @@ struct MentoringDetailView: View {
                     dismiss()
                 } label: {
                     Image(systemName: "chevron.left")
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(primaryTextColor)
                 }
             }
 
@@ -167,14 +172,14 @@ struct MentoringDetailView: View {
         HStack {
             Text(title)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(secondaryTextColor)
 
             Spacer()
 
             Text(value)
                 .font(.subheadline)
                 .fontWeight(.semibold)
-                .foregroundStyle(.primary)
+                .foregroundStyle(primaryTextColor)
         }
     }
 }

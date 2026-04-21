@@ -2,6 +2,8 @@ import SwiftUI
 
 struct MentoringRecordCard: View {
     let record: schedulingRecords
+    private let primaryTextColor = Color.black.opacity(0.9)
+    private let secondaryTextColor = Color.black.opacity(0.68)
 
     var body: some View {
         HStack(spacing: 16) {
@@ -9,11 +11,11 @@ struct MentoringRecordCard: View {
                 Text("멘토: \(record.selectedMentor)")
                     .font(.headline)
                     .fontWeight(.bold)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(primaryTextColor)
 
                 Text("예약 날짜: \(record.selectedTime.formatted(date: .abbreviated, time: .shortened))")
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(secondaryTextColor)
             }
 
             Spacer()

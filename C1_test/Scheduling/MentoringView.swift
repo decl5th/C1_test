@@ -35,6 +35,9 @@ struct SchedulingView: View {
     private let cardCornerRadius: CGFloat = 20
     private let cardFillColor = Color.white.opacity(0.82)
     private let defaultCardBorderColor = Color.accentColor.opacity(0.35)
+    private let primaryTextColor = Color.black.opacity(0.9)
+    private let secondaryTextColor = Color.black.opacity(0.68)
+    private let placeholderTextColor = Color.black.opacity(0.48)
 
     private var trimmedQuestion: String {
         fullText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -75,7 +78,7 @@ struct SchedulingView: View {
                         Text("새로운 멘토링")
                             .font(.title)
                             .fontWeight(.bold)
-                            .foregroundStyle(.black)
+                            .foregroundStyle(primaryTextColor)
 
                         VStack(alignment: .leading, spacing: 12) {
                             DatePicker(
@@ -92,7 +95,7 @@ struct SchedulingView: View {
                                 Text("시간")
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(secondaryTextColor)
 
                                 Spacer()
 
@@ -105,6 +108,7 @@ struct SchedulingView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 4)
+                        .environment(\.colorScheme, .light)
                         
                         VStack(alignment: .leading, spacing: 8) {
                             if showMentorRequired && selectedMentorName == nil {
@@ -124,7 +128,7 @@ struct SchedulingView: View {
                                         Text("Mentors")
                                             .font(.headline)
                                             .fontWeight(.semibold)
-                                            .foregroundStyle(.primary)
+                                            .foregroundStyle(primaryTextColor)
 
                                         Spacer()
                                     }
@@ -139,7 +143,7 @@ struct SchedulingView: View {
                                         Text("멘토를 선택해주세요")
                                             .font(.headline)
                                             .fontWeight(.semibold)
-                                            .foregroundStyle(.secondary)
+                                            .foregroundStyle(secondaryTextColor)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                     }
                                 }
@@ -162,20 +166,20 @@ struct SchedulingView: View {
                             Text("사전 질의")
                                 .font(.headline)
                                 .fontWeight(.semibold)
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(primaryTextColor)
 
                             ZStack(alignment: .topLeading) {
                                 if fullText.isEmpty {
-                                Text(questionPlaceholder)
-                                    .foregroundStyle(.secondary)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 12)
+                                    Text(questionPlaceholder)
+                                        .foregroundStyle(placeholderTextColor)
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 12)
                                 }
 
                                 TextEditor(text: $fullText)
                                     .focused($isQuestionEditorFocused)
                                     .scrollContentBackground(.hidden)
-                                    .foregroundColor(.black)
+                                    .foregroundColor(primaryTextColor)
                                     .font(.custom("HelveticaNeue", size: 13))
                                     .lineSpacing(5)
                                     .frame(minHeight: 120)
@@ -212,6 +216,17 @@ struct SchedulingView: View {
             .sheet(isPresented: $isMentorListPresented) {
                 NavigationStack {
                     MentorsList(selectedMentorName: $selectedMentorName)
+                }
+                .preferredColorScheme(.light)
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+
+                    Button("완료") {
+                        isQuestionEditorFocused = false
+                    }
+                    .fontWeight(.semibold)
                 }
             }
             .onAppear {
@@ -257,45 +272,48 @@ struct SchedulingView: View {
 
     @ViewBuilder
     private func submitButton(proxy: ScrollViewProxy) -> some View {
-        VStack(spacing: 0) {
-            Spacer()
+        if !isQuestionEditorFocused {
+            VStack(spacing: 0) {
+                Spacer()
 
-            Button {
-                if selectedMentorName == nil {
-                    showMentorRequired = true
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        proxy.scrollTo("mentorSelector", anchor: .center)
+                Button {
+                    if selectedMentorName == nil {
+                        showMentorRequired = true
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            proxy.scrollTo("mentorSelector", anchor: .center)
+                        }
+                    } else {
+                        schedulingSave()
+                        popUp = true
                     }
-                } else {
-                    schedulingSave()
-                    popUp = true
+                } label: {
+                    Text("신청")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .background(Color.accentColor)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
-            } label: {
-                Text("신청")
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.white)
-                    .background(Color.accentColor)
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            }
-            .buttonStyle(.plain)
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, max(keyboardHeight, 16))
-            .background(
-                LinearGradient(
-                    colors: [Color.backgroundApp.opacity(0), Color.backgroundApp.opacity(0.94)],
-                    startPoint: .top,
-                    endPoint: .bottom
+                .buttonStyle(.plain)
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, max(keyboardHeight, 16))
+                .background(
+                    LinearGradient(
+                        colors: [Color.backgroundApp.opacity(0), Color.backgroundApp.opacity(0.94)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 )
-            )
-            .alert("예약신청완료", isPresented: $popUp) {
-                Button("OK", role: .cancel) {
-                    dismiss()
+                .alert("예약신청완료", isPresented: $popUp) {
+                    Button("OK", role: .cancel) {
+                        dismiss()
+                    }
                 }
             }
+            .transition(.move(edge: .bottom).combined(with: .opacity))
         }
     }
 

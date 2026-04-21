@@ -14,6 +14,7 @@ struct MentoringStatusView: View {
     
     @State private var goToScheduling = false
     @State private var showDeleteAllAlert = false
+    private let secondaryTextColor = Color.black.opacity(0.68)
     
     var body: some View {
         ZStack {
@@ -36,7 +37,7 @@ struct MentoringStatusView: View {
                                        } label: {
                                            Image(systemName: "trash")
                                                .font(.body.weight(.semibold))
-                                               .foregroundStyle(.secondary)
+                                               .foregroundStyle(secondaryTextColor)
                                        }
                                        .buttonStyle(.plain)
                                    }
