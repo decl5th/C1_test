@@ -13,6 +13,7 @@ struct MentoringStatusView: View {
     @Query(sort: \schedulingRecords.selectedTime) private var mentoringRecords: [schedulingRecords]
     
     @State private var goToScheduling = false
+    @State private var showDeleteAllAlert = false
     
     var body: some View {
         ZStack {
@@ -31,11 +32,10 @@ struct MentoringStatusView: View {
                                    
                                    if !mentoringRecords.isEmpty {
                                        Button {
-                                           deleteAllMentoringData()
+                                           showDeleteAllAlert = true
                                        } label: {
-                                           Text("내역 삭제")
-                                               .font(.subheadline)
-                                               .fontWeight(.semibold)
+                                           Image(systemName: "trash")
+                                               .font(.body.weight(.semibold))
                                                .foregroundStyle(.secondary)
                                        }
                                        .buttonStyle(.plain)
@@ -56,21 +56,12 @@ struct MentoringStatusView: View {
                     ScrollView {
                         VStack(spacing: 12) {
                             ForEach(mentoringRecords) { item in
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("멘토: \(item.selectedMentor)")
-                                        .font(.headline)
-                                        .fontWeight(.bold)
-                                    
-                                    Text("예약 날짜: \(item.selectedTime.formatted(date: .abbreviated, time: .shortened))")
-                                        .font(.subheadline)
-                                        .foregroundStyle(.secondary)
+                                NavigationLink {
+                                    MentoringDetailView(record: item)
+                                } label: {
+                                    MentoringRecordCard(record: item)
                                 }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                        .fill(Color.accentColor.opacity(0.15))
-                                )
+                                .buttonStyle(.plain)
                             }
                         }
                         .padding(.horizontal)
@@ -92,14 +83,21 @@ struct MentoringStatusView: View {
                         .padding(.bottom, 8)
                     
                 }
-                
-                NavigationLink(destination: SchedulingView(), isActive: $goToScheduling) {
-                    EmptyView()
-                }
             }
             .padding(.top, 8)
         }
-        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
+        .navigationDestination(isPresented: $goToScheduling) {
+            SchedulingView()
+        }
+        .alert("예약 내역을 모두 삭제할까요?", isPresented: $showDeleteAllAlert) {
+            Button("취소", role: .cancel) { }
+            Button("전체 삭제", role: .destructive) {
+                deleteAllMentoringData()
+            }
+        } message: {
+            Text("저장된 멘토링 예약 내역이 모두 삭제되며 다시 복구할 수 없습니다.")
+        }
     }
     
     private func deleteAllMentoringData() {
