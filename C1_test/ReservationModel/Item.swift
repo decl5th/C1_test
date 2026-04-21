@@ -11,11 +11,18 @@ import SwiftData
 
 @Model
 final class schedulingRecords {
+    @Attribute(.unique) var id: UUID
     var selectedTime: Date // Datepicker에서 선택한 날짜와 시간
     var selectedMentor: String // MentorList에서 선택한 mentorName
     var qToMentor: String // TextEditor에서 입력한 String 
 
-    init(selectedTime: Date, selectedMentor: String, qToMentor: String) {
+    init(
+        id: UUID = UUID(),
+        selectedTime: Date,
+        selectedMentor: String,
+        qToMentor: String
+    ) {
+        self.id = id
         self.selectedTime = selectedTime
         self.selectedMentor = selectedMentor
         self.qToMentor = qToMentor

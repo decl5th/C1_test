@@ -17,52 +17,63 @@ struct MentorsList: View {
     private let collapsedMentorLimit = 3
     
     var body: some View {
-        List {
-            ForEach(expertises) { expert in
-                Section(expert.expertArea) {
-                    ForEach(visibleMentors(for: expert)) { mentor in
-                        Button {
-                            if selectedMentorName?.id == mentor.id {
-                                selectedMentorName = nil
-                            } else {
-                                selectedMentorName = mentor
-                                dismiss()
-                            }
-                        } label: {
-                            HStack {
-                                MentorsListRow(mentor: mentor)
-                                Spacer()
-                                
-                                if selectedMentorName?.id == mentor.id {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(.tint)
-                                }
-                            }
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                    }
+        List { listContent }
+        .navigationTitle("멘토 선택")
+    }
 
-                    if shouldShowExpansionButton(for: expert) {
-                        Button {
-                            toggleExpanded(for: expert)
-                        } label: {
-                            HStack {
-                                Spacer()
+    @ViewBuilder
+    private var listContent: some View {
+        ForEach(expertises) { expert in
+            Section(expert.expertArea) {
+                ForEach(visibleMentors(for: expert)) { mentor in
+                    mentorButton(for: mentor)
+                }
 
-                                Image(systemName: isExpanded(expert) ? "chevron.up" : "chevron.down")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(.accent)
-                            }
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                    }
+                if shouldShowExpansionButton(for: expert) {
+                    expandButton(for: expert)
                 }
             }
         }
-        .navigationTitle("멘토 선택")
+    }
+
+    private func mentorButton(for mentor: Mentor) -> some View {
+        Button {
+            if selectedMentorName?.id == mentor.id {
+                selectedMentorName = nil
+            } else {
+                selectedMentorName = mentor
+                dismiss()
+            }
+        } label: {
+            HStack {
+                MentorsListRow(mentor: mentor)
+                Spacer()
+
+                if selectedMentorName?.id == mentor.id {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(.tint)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func expandButton(for expertise: Expertise) -> some View {
+        Button {
+            toggleExpanded(for: expertise)
+        } label: {
+            HStack {
+                Spacer()
+
+                Image(systemName: isExpanded(expertise) ? "chevron.up" : "chevron.down")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(Color.accentColor)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     private func sortedMentors(for expertise: Expertise) -> [Mentor] {
@@ -91,10 +102,6 @@ struct MentorsList: View {
         sortedMentors(for: expertise).count > collapsedMentorLimit
     }
 
-    private func hiddenMentorCount(for expertise: Expertise) -> Int {
-        max(sortedMentors(for: expertise).count - collapsedMentorLimit, 0)
-    }
-
     private func isExpanded(_ expertise: Expertise) -> Bool {
         expandedExpertiseIDs.contains(expertise.id)
     }
@@ -106,12 +113,4 @@ struct MentorsList: View {
             expandedExpertiseIDs.insert(expertise.id)
         }
     }
-
-//    private func expansionButtonTitle(for expertise: Expertise) -> String {
-//        if isExpanded(expertise) {
-//            " "
-//        } else {
-//            " "
-//        }
-//    }
 }

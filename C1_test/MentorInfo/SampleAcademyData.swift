@@ -24,6 +24,7 @@ enum InitialMentorData {
             area: "Design",
             mentors: [
                 "Jiku",
+                "Dora",
                 "Friday",
                 "Saya",
                 "Senny"

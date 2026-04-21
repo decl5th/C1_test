@@ -11,7 +11,7 @@ import SwiftData
 struct SchedulingView: View {
     
     @Environment(\.dismiss) var dismiss
-   // @Environment(\.modelContext) private var modelContext
+    @Environment(\.modelContext) private var modelContext
     
     @State private var selectedMentorName: Mentor? = nil
     @State private var isMentorListPresented: Bool = false
@@ -27,40 +27,17 @@ struct SchedulingView: View {
         return formatter
     }
     
-    let  backgroundCover = Color(.backgroundApp)
+    let backgroundCover = Color.backgroundApp
     
     private func schedulingSave() {
-        // 임시 배열 생성 => dateArray에 Date타입 배열 형태로 담을거야
-        var dateArray: [Date] = []
-        // 저장 불러오기 -> 임시배열에 저장 => dateArray라는 변수는 또 userdefaults에 있는 배열로 Date타입으로 담는용으로 취급할거야
-        dateArray = UserDefaults.standard.array(forKey: "mentoringDate") as? [Date] ?? []
-        // 임시 배열에 -> 내 요소 추가 => 그래서 이 배열에 내가 선택한 날짜를 담을거야
-        dateArray.append(mentoringDate)
-        // 임시 배열을 유저디폴트에 저장 => 유저티폴트 저장값으로 dateArray를 담을거야
-        UserDefaults.standard.set(dateArray, forKey: "mentoringDate")
-        
-        /*
-        var mentorNameArray = [Mentor?]
-        mentorNameArray = UserDefaults.standard.array(forKey: "selectedMentorName") as? [Mentor?] ?? []
-        mentorNameArray.append(selectedMentorName)
-        UserDefaults.standard.set(mentorNameArray, forKey: "selectedMentorName")
-        */
-        
-        var mentorNameArray: [String] = []
-          mentorNameArray = UserDefaults.standard.stringArray(forKey: "selectedMentorName") ?? []
-          mentorNameArray.append(selectedMentorName?.mentorName ?? "멘토 미선택")
-          UserDefaults.standard.set(mentorNameArray, forKey: "selectedMentorName")
-        
-        
-        var questionArrary : [String] = []
-        questionArrary = UserDefaults.standard.array(forKey: "fullText") as? [String] ?? []
-        questionArrary.append(fullText)
-        UserDefaults.standard.set(questionArrary, forKey: "fullText")
-        
-        
-        // 단수형 저장식 UserDefaults.standard.set(mentoringDate, forKey: "mentoringDate")
-        //UserDefaults.standard.set(selectedMentorName?.mentorName, forKey: "selectedMentorName")
-        // UserDefaults.standard.set(fullText, forKey: "fullText")
+        let record = schedulingRecords(
+            selectedTime: mentoringDate,
+            selectedMentor: selectedMentorName?.mentorName ?? "멘토 미선택",
+            qToMentor: fullText
+        )
+
+        modelContext.insert(record)
+        try? modelContext.save()
     }
     
     var body: some View {
@@ -104,7 +81,7 @@ struct SchedulingView: View {
                                 Text(selectedMentorName.mentorName)
                                     .font(.title3)
                                     .fontWeight(.semibold)
-                                    .foregroundStyle(.accent)
+                                    .foregroundStyle(Color.accentColor)
                                     .multilineTextAlignment(.center)
                             } else {
                                 Text("멘토를 선택해주세요")
@@ -117,7 +94,7 @@ struct SchedulingView: View {
                         .frame(height: 56)
                         .overlay {
                             RoundedRectangle(cornerRadius: 15)
-                                .stroke(Color.accent, lineWidth: 0.4)
+                                .stroke(Color.accentColor, lineWidth: 0.4)
                         }
                     }
                     .buttonStyle(.plain)
@@ -132,7 +109,7 @@ struct SchedulingView: View {
                     .textEditorStyle(.automatic)
                     .overlay {
                         RoundedRectangle(cornerRadius: 15)
-                            .stroke(Color.accent, lineWidth: 0.4)
+                            .stroke(Color.accentColor, lineWidth: 0.4)
                     }
                 
                 HStack{
@@ -174,18 +151,6 @@ struct SchedulingView: View {
     }
 
 }
-/*
-private func schedulingSave() {
-    UserDefaults.standard.set(mentoringDate, forKey: "mentoringDate")
-    UserDefaults.standard.set(selectedMentorName?.mentorName, forKey: "selectedMentorName")
-    UserDefaults.standard.set(fullText, forKey: "fullText")
-
-    
-}
- */
-
-
-
 
 #Preview("Scheduling") {
     SchedulingView()
